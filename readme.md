@@ -2,12 +2,6 @@
 
 This is my 8th session assignment for Golang For Women 2024 class.
 
-## How to run
-
-```bash
-./install.sh
-```
-
 Create `.env` file and fill your database information
 
 ```bash
