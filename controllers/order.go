@@ -37,15 +37,15 @@ func OrderCreate(ctx *gin.Context) {
 			return err
 		}
 
-		// create order items
-		for _, orderItem := range Order.Items {
-			orderItem.ID = 0
-			orderItem.OrderID = Order.ID
-			fmt.Println("aaa:", orderItem, "bbb:", Order.ID)
-			if err := tx.Debug().Create(&orderItem).Error; err != nil {
-				return err
-			}
-		}
+		// Create order items
+		// for _, orderItem := range Order.Items {
+		// 	orderItem.ID = 0
+		// 	orderItem.OrderID = Order.ID
+		// 	fmt.Println("aaa:", orderItem, "bbb:", Order.ID)
+		// 	if err := tx.Debug().Create(&orderItem).Error; err != nil {
+		// 		return err
+		// 	}
+		// }
 
 		// return nil will commit the whole transaction
 		return nil
@@ -61,6 +61,46 @@ func OrderCreate(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Order created successfully",
+		"data":    Order,
+	})
+}
+
+func Orders(ctx *gin.Context) {
+	db := database.GetDB()
+
+	var Orders []models.Order
+
+	err := db.Preload("Items").Find(&Orders).Error
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "Failed to fetch orders",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Order fetched successfully",
+		"data":    Orders,
+	})
+}
+
+func OrderDetail(ctx *gin.Context) {
+	db := database.GetDB()
+
+	var Order []models.Order
+
+	OrderID := ctx.Param("id")
+
+	err := db.Preload("Items").First(&Order, OrderID).Error
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "Order not found",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Order detail fetched successfully",
 		"data":    Order,
 	})
 }
