@@ -1,6 +1,6 @@
 # LetsGO!
 
-This repo is my notes and mini challenges from Golang For Women 2024 class.
+This is my 8th session assignment for Golang For Women 2024 class.
 
 ## How to run
 
