@@ -9,10 +9,10 @@ import (
 
 type OrderItem struct {
 	ID          uint   `gorm:"primaryKey" db:"id" json:"id"`
-	Name        string `gorm:"not null" db:"name" json:"name" form:"name" valid:"required~Name of product is required"`
-	Description string `gorm:"not null" db:"description" json:"description" form:"description" valid:"required~Description of product is required"`
-	Quantity    int    `gorm:"not null" db:"quantity" json:"quantity" form:"quantity" valid:"required~Quantity of product is required, numeric~Invalid quantity format"`
-	OrderID     uint   `db:"order_id"`
+	Name        string `gorm:"not null" db:"name" json:"name" valid:"required"`
+	Description string `gorm:"not null" db:"description" json:"description" valid:"required"`
+	Quantity    int    `gorm:"not null" db:"quantity" json:"quantity" valid:"required,numeric"`
+	OrderID     uint   `gorm:"not null" db:"order_id"`
 	CreatedAt   *time.Time
 	UpdatedAt   *time.Time
 }
