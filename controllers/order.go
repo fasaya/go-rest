@@ -52,7 +52,7 @@ func OrderCreate(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
+		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "Bad request",
 			"message": err.Error(),
 		})
@@ -102,5 +102,82 @@ func OrderDetail(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Order detail fetched successfully",
 		"data":    Order,
+	})
+}
+
+func OrderUpdate(ctx *gin.Context) {
+	db := database.GetDB()
+
+	var Order models.Order
+
+	OrderID := ctx.Param("id")
+
+	err := db.First(&Order, OrderID).Error
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "Order not found",
+		})
+		return
+	}
+
+	var OrderItem models.OrderItem
+	err = db.Where("order_id = ?", OrderID).Delete(&OrderItem).Error
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to delete order items",
+		})
+		return
+	}
+
+	ctx.ShouldBindJSON(&Order)
+
+	err = db.Save(&Order).Error
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to update order",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Order updated successfully",
+		"data":    Order,
+	})
+}
+
+func OrderDelete(ctx *gin.Context) {
+	db := database.GetDB()
+
+	var Order models.Order
+
+	OrderID := ctx.Param("id")
+
+	err := db.First(&Order, OrderID).Error
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "Order not found",
+		})
+		return
+	}
+
+	var OrderItem models.OrderItem
+	err = db.Where("order_id = ?", OrderID).Delete(&OrderItem).Error
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to delete order items",
+		})
+		return
+	}
+
+	err = db.Delete(&Order).Error
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to delete order",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Order deleted successfully",
 	})
 }

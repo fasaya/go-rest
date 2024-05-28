@@ -10,6 +10,8 @@ func StartApp() *gin.Engine {
 	router := gin.Default()
 
 	router.GET("/order/:id", controllers.OrderDetail)
+	router.PUT("/orders/:id", controllers.OrderUpdate)
+	router.DELETE("/orders/:id", controllers.OrderDelete)
 	router.GET("/orders", controllers.Orders)
 	router.POST("/orders", controllers.OrderCreate)
 
